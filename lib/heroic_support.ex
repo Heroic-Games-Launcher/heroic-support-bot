@@ -14,7 +14,9 @@ defmodule HeroicSupport do
   end
 
   def find_attachments(attachments) do
-    Enum.map(attachments, fn att -> [att.filename, att.url] end)
+    attachments
+    |> Enum.reject(fn att -> att.height != nil or att.width != nil end)
+    |> Enum.map(fn att -> [att.filename, att.url] end)
   end
 
   def fix_links(links) do
