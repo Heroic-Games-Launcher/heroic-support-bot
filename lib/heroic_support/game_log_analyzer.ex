@@ -22,7 +22,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     if is_game_log?(log_content) do
       detect_os(log_content) |> analyze_for(log_content) |> Enum.at(0)
     else
-      "Not a game log"
+      ["Not a game log"]
     end
   end
 
