@@ -6,7 +6,7 @@ defmodule HeroicSupport.MixProject do
       app: :heroic_support,
       version: "0.1.0",
       elixir: "~> 1.19",
-      start_permanent: Mix.env() == :prod,
+      start_permanent: System.fetch_env!("MIX_ENV") == "prod",
       deps: deps()
     ]
   end

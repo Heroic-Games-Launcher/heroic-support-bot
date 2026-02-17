@@ -8,7 +8,7 @@ defmodule HeroicSupport.Application do
   @impl true
   @spec start(any(), any()) :: {:error, any()} | {:ok, pid()}
   def start(_type, _args) do
-    if Mix.env() == :test do
+    if System.fetch_env!("MIX_ENV") == "test" do
       # See https://hexdocs.pm/elixir/Supervisor.html
       # for other strategies and supported options
       opts = [strategy: :one_for_one, name: HeroicSupport.Supervisor]

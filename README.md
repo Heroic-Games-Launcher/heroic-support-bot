@@ -4,6 +4,8 @@
 
 ### Setup
 
+- Install Erlang 28
+- Install Elixir 1.19.0
 - Run `mix deps.get` to install dependencies
 
 ### Tests
