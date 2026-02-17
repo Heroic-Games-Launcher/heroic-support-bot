@@ -45,6 +45,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     |> check_nvidia_prime()
     |> check_flatpak_update_nvidia()
     |> check_dxvk_driver_version()
+    |> check_wine_ge()
   end
 
   def analyze_for(unknown_os, _file_content) do
@@ -92,6 +93,14 @@ defmodule HeroicSupport.GameLogAnalyzer do
   def check_dxvk_driver_version([issues, file_content]) do
     if Regex.match?(~r/Device does not support required feature 'maintenance5'/, file_content) do
       [["DXVKRequiresNewerDriver" | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  def check_wine_ge([issues, file_content]) do
+    if Regex.match?(~r/"name": "Wine-GE-Proton/, file_content) do
+      [["wineGEDeprecated" | issues], file_content]
     else
       [issues, file_content]
     end

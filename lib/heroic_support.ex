@@ -56,6 +56,10 @@ defmodule HeroicSupport do
     do:
       "The `Use Dedicated Graphics Card` option is almost never needed. Disable it unless you are completely sure you need it."
 
+  def check_to_string("wineGEDeprecated"),
+    do:
+      "Wine GE has been deprecated and it's not maintained anymore. You should use GE-Proton or another maintained Proton variant."
+
   def check_to_string(unknown) do
     unknown
   end
