@@ -23,6 +23,6 @@ defmodule HeroicSupport.MixProject do
   defp deps do
     # [{:nostrum, "~> 0.10"}]
     # Or, for bleeding edge changes:
-    [{:nostrum, github: "Kraigie/nostrum"}]
+    [{:nostrum, github: "Kraigie/nostrum"}, {:req, "~> 0.5.0"}]
   end
 end

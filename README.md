@@ -1,21 +1,20 @@
 # HeroicSupport
 
-**TODO: Add description**
+## Development
 
-## Installation
+### Setup
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `heroic_support` to your list of dependencies in `mix.exs`:
+- Run `mix deps.get` to install dependencies
 
-```elixir
-def deps do
-  [
-    {:heroic_support, "~> 0.1.0"}
-  ]
-end
-```
+### Tests
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/heroic_support>.
+- Run `mix test` to run all tests
 
+Note that Nostrum is disabled in the test environment, we don't really need to test it and we can abstract code if needed to other modules to not need Nostrum for tests.
+
+### Local dev
+
+- Create your bot and get the BOT_TOKEN
+- Copy `dev.sample.exs` as `dev.exs` and configure a BOT_TOKEN variable
+- Add the bot to a server
+- Run `mix run --no-halt` to run the bot

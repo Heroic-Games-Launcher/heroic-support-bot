@@ -6,21 +6,29 @@ defmodule HeroicSupport.Application do
   use Application
 
   @impl true
+  @spec start(any(), any()) :: {:error, any()} | {:ok, pid()}
   def start(_type, _args) do
-    bot_options = %{
-      name: HeroicSupport,
-      consumer: HeroicSupport.Consumer,
-      intents: [:direct_messages, :guild_messages, :message_content],
-      wrapped_token: fn -> System.fetch_env!("BOT_TOKEN") end
-    }
+    if Mix.env() == :test do
+      # See https://hexdocs.pm/elixir/Supervisor.html
+      # for other strategies and supported options
+      opts = [strategy: :one_for_one, name: HeroicSupport.Supervisor]
+      Supervisor.start_link([], opts)
+    else
+      bot_options = %{
+        name: HeroicSupport,
+        consumer: HeroicSupport.Consumer,
+        intents: [:direct_messages, :guild_messages, :message_content],
+        wrapped_token: fn -> System.fetch_env!("BOT_TOKEN") end
+      }
 
-    children = [
-      {Nostrum.Bot, bot_options}
-    ]
+      children = [
+        {Nostrum.Bot, bot_options}
+      ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: HeroicSupport.Supervisor]
-    Supervisor.start_link(children, opts)
+      # See https://hexdocs.pm/elixir/Supervisor.html
+      # for other strategies and supported options
+      opts = [strategy: :one_for_one, name: HeroicSupport.Supervisor]
+      Supervisor.start_link(children, opts)
+    end
   end
 end
