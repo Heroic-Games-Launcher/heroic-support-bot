@@ -71,8 +71,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
   end
 
   def check_gptk_on_intel([issues, file_content]) do
-    if Regex.match?(~r/CPU.*Intel/, file_content) and
-         Regex.match?(~r/"name": "Game-Porting-Toolkit/, file_content) do
+    if multi_match?([~r/CPU.*Intel/, ~r/"name": "Game-Porting-Toolkit/], file_content) do
       [["gptkIncompatibleWithIntel" | issues], file_content]
     else
       [issues, file_content]
@@ -80,10 +79,15 @@ defmodule HeroicSupport.GameLogAnalyzer do
   end
 
   def check_flatpak_update_nvidia([issues, file_content]) do
-    if Regex.match?(~r/We are running inside a Flatpak container/, file_content) and
-         Regex.match?(~r/Driver: nvidia/, file_content) and
-         !Regex.match?(~r/Found device: NVIDIA/, file_content) and
-         Regex.match?(~r/Found device: llvmpipe/, file_content) do
+    if multi_match?(
+         [
+           ~r/We are running inside a Flatpak container/,
+           ~r/Driver: nvidia/,
+           ~r/Found device: llvmpipe/
+         ],
+         file_content
+       ) and
+         !Regex.match?(~r/Found device: NVIDIA/, file_content) do
       [["flatpakNvidiaOutdated" | issues], file_content]
     else
       [issues, file_content]
@@ -99,7 +103,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
   end
 
   def check_wine_ge([issues, file_content]) do
-    if Regex.match?(~r/"name": "Wine-GE-Proton/, file_content) do
+    if Regex.match?(~r/name.*Wine-GE-Proton/, file_content) do
       [["wineGEDeprecated" | issues], file_content]
     else
       [issues, file_content]
@@ -107,6 +111,10 @@ defmodule HeroicSupport.GameLogAnalyzer do
   end
 
   def is_game_log?(log_content) do
-    Regex.match?(~r/Launching.*\n.*Native\?.*/, log_content)
+    multi_match?([~r/Launching .*/, ~r/Installed in/, ~r/Native\?.*/], log_content)
+  end
+
+  defp multi_match?(regexps, log_content) do
+    Enum.all?(regexps, fn reg -> Regex.match?(reg, log_content) end)
   end
 end
