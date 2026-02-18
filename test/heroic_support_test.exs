@@ -28,4 +28,28 @@ defmodule HeroicSupportTest do
              ["4321.log", "https://0x0.st/4321.log"]
            ]
   end
+
+  test "ignores logs with not issues detected" do
+    results = [
+      [["log1.log", "https://example.com/log1.log"], []],
+      [["log2.log", "https://example.com/log2.log"], ["missingRosetta"]]
+    ]
+
+    assert HeroicSupport.results_to_message(results),
+           "\"log2.log\" analyzed:\n#{HeroicSupport.check_to_string("missingRosetta")}"
+
+    results = [
+      [["log1.log", "https://example.com/log1.log"], ["DXVKRequiresNewerDriver"]],
+      [["log2.log", "https://example.com/log2.log"], ["missingRosetta"]]
+    ]
+
+    assert HeroicSupport.results_to_message(results),
+           "\"log1.log\" analyzed:\n#{HeroicSupport.check_to_string("DXVKRequiresNewerDriver")}\n\n\"log2.log\" analyzed:\n#{HeroicSupport.check_to_string("missingRosetta")}"
+
+    results = [
+      [["log1.log", "https://example.com/log1.log"], []]
+    ]
+
+    assert HeroicSupport.results_to_message(results), ""
+  end
 end

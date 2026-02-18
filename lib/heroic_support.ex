@@ -25,18 +25,20 @@ defmodule HeroicSupport do
   end
 
   def results_to_message(results) do
-    Enum.map(results, fn [[name, _], checks] ->
-      "\"#{name}\" analyzed:\n#{process_checks(checks)}"
-    end)
+    results
+    |> Enum.map(fn [[name, _], checks] -> process_result_for_file(name, checks) end)
+    |> Enum.reject(fn str -> str == nil end)
     |> Enum.join("\n\n")
   end
 
+  def process_result_for_file(_, []), do: nil
+
+  def process_result_for_file(name, checks) do
+    "\"#{name}\" analyzed:\n#{process_checks(checks)}"
+  end
+
   def process_checks(checks) do
-    if Enum.empty?(checks) do
-      "No issues detected by the bot."
-    else
-      Enum.map(checks, fn check -> check_to_string(check) end) |> Enum.join("\n")
-    end
+    Enum.map(checks, fn check -> check_to_string(check) end) |> Enum.join("\n")
   end
 
   def check_to_string("missingRosetta"),

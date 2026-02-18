@@ -13,10 +13,14 @@ defmodule HeroicSupport.Consumer do
       if !Enum.empty?(all_logs) do
         result = GameLogAnalyzer.analyze_links(all_logs)
 
-        Message.create(
-          msg.channel_id,
-          "[This is an automatic message, don't reply to the bot 🤖]\n\n#{HeroicSupport.results_to_message(result)}"
-        )
+        result_string = HeroicSupport.results_to_message(result)
+
+        if result_string != "" do
+          Message.create(
+            msg.channel_id,
+            "[This is an automatic message, don't reply to the bot 🤖]\n\n#{result_string}"
+          )
+        end
       else
         if msg.id == msg.channel_id do
           Message.create(
