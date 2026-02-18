@@ -39,7 +39,8 @@ defmodule HeroicSupport.Consumer do
     with {:ok, channel} <- get_channel(message.channel_id),
          {:ok, parent} <- get_channel(channel.parent_id) do
       # 15 is the GUILD_FORUM type https://docs.discord.com/developers/resources/channel#channel-object-channel-types
-      parent.type == 15
+      # 1042545607849541662 is the id of the `💡-suggestions` section
+      parent.type == 15 and channel.parent_id != 1_042_545_607_849_541_662
     else
       _ -> false
     end
