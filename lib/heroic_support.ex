@@ -21,7 +21,7 @@ defmodule HeroicSupport do
 
   def fix_links(links) do
     Enum.map(links, fn link -> String.replace(link, "oxo", "0x0") end)
-    |> Enum.map(fn link -> [String.replace(link, "https://0x0.st/", ""), link] end)
+    |> Enum.map(fn link -> [link, link] end)
   end
 
   def results_to_message(results) do
