@@ -38,6 +38,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     [[], file_content]
     |> check_missing_rosetta()
     |> check_gptk_on_intel()
+    |> check_macos_version()
   end
 
   def analyze_for("linux", file_content) do
@@ -78,6 +79,15 @@ defmodule HeroicSupport.GameLogAnalyzer do
     end
   end
 
+  def check_macos_version([issues, file_content]) do
+    [[_, version]] = Regex.scan(~r/OS:[\s\D]+([\d\.]+)\s+\(darwin\)/, file_content)
+
+    version
+    |> String.split(".")
+    |> Enum.map(&String.to_integer/1)
+    |> compare_macos_version(issues, file_content)
+  end
+
   def check_flatpak_update_nvidia([issues, file_content]) do
     if multi_match?(
          [
@@ -116,5 +126,48 @@ defmodule HeroicSupport.GameLogAnalyzer do
 
   defp multi_match?(regexps, log_content) do
     Enum.all?(regexps, fn reg -> Regex.match?(reg, log_content) end)
+  end
+
+  # TODO: find a way to not have to update these manually
+  def latest_sonoma, do: [14, 8, 4]
+  def latest_sequoia, do: [15, 7, 4]
+  def latest_tahoe, do: [26, 3, 0]
+
+  defp compare_macos_version([26 | _rest] = ver, issues, file_content) do
+    if ver < latest_tahoe() do
+      [[["outdatedMacOsVersion", latest_tahoe()] | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  defp compare_macos_version([15 | _rest] = ver, issues, file_content) do
+    if ver < latest_sequoia() do
+      [[["outdatedMacOsVersion", latest_sequoia()] | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  defp compare_macos_version([14 | _rest] = ver, issues, file_content) do
+    if ver < latest_sonoma() do
+      [[["outdatedMacOsVersion", latest_sonoma()] | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  defp compare_macos_version(ver, issues, file_content) do
+    if ver < latest_sonoma() do
+      [
+        [
+          "sonomaOrHigherRequired"
+          | issues
+        ],
+        file_content
+      ]
+    else
+      [issues, file_content]
+    end
   end
 end

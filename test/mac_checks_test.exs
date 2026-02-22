@@ -1,4 +1,5 @@
 defmodule MacChecksTest do
+  alias HeroicSupport.GameLogAnalyzer
   use ExUnit.Case
 
   test "detects missing Rosetta on MacOS" do
@@ -121,5 +122,109 @@ defmodule MacChecksTest do
     [issues, _] = HeroicSupport.GameLogAnalyzer.analyze_for("darwin", content)
 
     assert Enum.member?(issues, "gptkIncompatibleWithIntel")
+  end
+
+  test "detects not sonoma or higher" do
+    ["12.7.6", "13.7.8"]
+    |> Enum.each(fn ver ->
+      content = """
+      (21:36:30) [INFO]:    Launching "Rocket League®" (legendary)
+      (21:36:30) [INFO]:    Native? false
+      (21:36:30) [INFO]:    Installed in: /Users/user/Games/Heroic/rocketleague
+
+      (21:36:30) [INFO]:    System Info:
+      CPU: 8x Intel(R) Core(TM) i7-4771 CPU @ 3.50GHz
+      Memory: 25.77 GB (used: 8.51 GB)
+      GPUs:
+
+      OS: #{ver} (darwin)
+
+      The current system is not a Steam Deck
+      We are not running inside a Flatpak container
+
+      Software Versions:
+        Heroic: 2.18.1 "Waterfall Beard" Jorul
+        Legendary: 0.20.37 Exit 17 (Heroic)
+        gogdl: 1.1.2
+        comet: comet 0.2.0
+        Nile: 1.1.2 Will A. Zeppeli
+      """
+
+      [issues, _] = HeroicSupport.GameLogAnalyzer.analyze_for("darwin", content)
+
+      assert Enum.member?(issues, "sonomaOrHigherRequired")
+    end)
+  end
+
+  test "detects outdated OS version" do
+    [
+      ["14.5.1", GameLogAnalyzer.latest_sonoma()],
+      ["15.1.4", GameLogAnalyzer.latest_sequoia()],
+      ["MacOS 26.0", GameLogAnalyzer.latest_tahoe()]
+    ]
+    |> Enum.each(fn [ver, latest] ->
+      content = """
+      (21:36:30) [INFO]:    Launching "Rocket League®" (legendary)
+      (21:36:30) [INFO]:    Native? false
+      (21:36:30) [INFO]:    Installed in: /Users/user/Games/Heroic/rocketleague
+
+      (21:36:30) [INFO]:    System Info:
+      CPU: 8x Intel(R) Core(TM) i7-4771 CPU @ 3.50GHz
+      Memory: 25.77 GB (used: 8.51 GB)
+      GPUs:
+
+      OS: #{ver} (darwin)
+
+      The current system is not a Steam Deck
+      We are not running inside a Flatpak container
+
+      Software Versions:
+        Heroic: 2.18.1 "Waterfall Beard" Jorul
+        Legendary: 0.20.37 Exit 17 (Heroic)
+        gogdl: 1.1.2
+        comet: comet 0.2.0
+        Nile: 1.1.2 Will A. Zeppeli
+      """
+
+      [issues, _] = HeroicSupport.GameLogAnalyzer.analyze_for("darwin", content)
+
+      assert Enum.member?(issues, ["outdatedMacOsVersion", latest])
+    end)
+  end
+
+  test "does not flag up-to-date macos versions" do
+    [
+      [GameLogAnalyzer.latest_sonoma() |> Enum.join("."), GameLogAnalyzer.latest_sonoma()],
+      [GameLogAnalyzer.latest_sequoia() |> Enum.join("."), GameLogAnalyzer.latest_sequoia()],
+      [GameLogAnalyzer.latest_tahoe() |> Enum.join("."), GameLogAnalyzer.latest_tahoe()]
+    ]
+    |> Enum.each(fn [ver, latest] ->
+      content = """
+      (21:36:30) [INFO]:    Launching "Rocket League®" (legendary)
+      (21:36:30) [INFO]:    Native? false
+      (21:36:30) [INFO]:    Installed in: /Users/user/Games/Heroic/rocketleague
+
+      (21:36:30) [INFO]:    System Info:
+      CPU: 8x Intel(R) Core(TM) i7-4771 CPU @ 3.50GHz
+      Memory: 25.77 GB (used: 8.51 GB)
+      GPUs:
+
+      OS: #{ver} (darwin)
+
+      The current system is not a Steam Deck
+      We are not running inside a Flatpak container
+
+      Software Versions:
+        Heroic: 2.18.1 "Waterfall Beard" Jorul
+        Legendary: 0.20.37 Exit 17 (Heroic)
+        gogdl: 1.1.2
+        comet: comet 0.2.0
+        Nile: 1.1.2 Will A. Zeppeli
+      """
+
+      [issues, _] = HeroicSupport.GameLogAnalyzer.analyze_for("darwin", content)
+
+      refute Enum.member?(issues, ["outdatedMacOsVersion" | latest])
+    end)
   end
 end

@@ -56,4 +56,9 @@ defmodule HeroicSupportTest do
 
     assert HeroicSupport.results_to_message(results), ""
   end
+
+  test "converts macos version to string" do
+    assert HeroicSupport.check_to_string(["outdatedMacOsVersion", [26, 3, 0]]) ==
+             "Your MacOS version is not the latest. Updating to the latest version is known to fix some game issues, update to at least version 26.3.0"
+  end
 end

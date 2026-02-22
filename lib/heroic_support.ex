@@ -64,6 +64,13 @@ defmodule HeroicSupport do
     do:
       "Wine GE has been deprecated and it's not maintained anymore. You should use GE-Proton or another maintained Proton variant."
 
+  def check_to_string("sonomaOrHigherRequired"),
+    do: "MacOS Sonoma (14) or higher is required to run games."
+
+  def check_to_string(["outdatedMacOsVersion", at_least]),
+    do:
+      "Your MacOS version is not the latest. Updating to the latest version is known to fix some game issues, update to at least version #{Enum.join(at_least, ".")}"
+
   def check_to_string(unknown) do
     unknown
   end
