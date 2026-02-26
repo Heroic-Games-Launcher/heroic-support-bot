@@ -71,6 +71,9 @@ defmodule HeroicSupport do
     do:
       "Your MacOS version is not the latest. Updating to the latest version is known to fix some game issues, update to at least version #{Enum.join(at_least, ".")}"
 
+  def check_to_string(["outdatedHeroicVersion", latest_version]),
+    do: "Your Heroic version is outdated, please update to #{Enum.join(latest_version, ".")}"
+
   def check_to_string(unknown) do
     unknown
   end

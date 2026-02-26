@@ -20,7 +20,10 @@ defmodule HeroicSupport.GameLogAnalyzer do
     log_content = Req.get!(link).body
 
     if is_game_log?(log_content) do
-      detect_os(log_content) |> analyze_for(log_content) |> Enum.at(0)
+      detect_os(log_content)
+      |> analyze_for(log_content)
+      |> general_checks()
+      |> Enum.at(0)
     else
       ["Not a game log"]
     end
@@ -31,7 +34,8 @@ defmodule HeroicSupport.GameLogAnalyzer do
     os_name
   end
 
-  def analyze_for("windows", _file_content) do
+  def analyze_for("windows", file_content) do
+    [[], file_content]
   end
 
   def analyze_for("darwin", file_content) do
@@ -53,6 +57,11 @@ defmodule HeroicSupport.GameLogAnalyzer do
     IO.puts("Unknown OS #{unknown_os}, can't analize")
 
     %{}
+  end
+
+  def general_checks([issues, file_content]) do
+    [issues, file_content]
+    |> check_heroic_version()
   end
 
   def check_nvidia_prime([issues, file_content]) do
@@ -120,6 +129,20 @@ defmodule HeroicSupport.GameLogAnalyzer do
     end
   end
 
+  def check_heroic_version([issues, file_content]) do
+    [[_, version]] = Regex.scan(~r/Software Versions:\n\s+Heroic:\s+([\d\.]+)/, file_content)
+
+    versionList =
+      String.split(version, ".")
+      |> Enum.map(&String.to_integer/1)
+
+    if versionList < latest_heroic() do
+      [[["outdatedHeroicVersion", latest_heroic()] | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
   def is_game_log?(log_content) do
     multi_match?([~r/Launching .*/, ~r/Installed in/, ~r/Native\?.*/], log_content)
   end
@@ -127,6 +150,8 @@ defmodule HeroicSupport.GameLogAnalyzer do
   defp multi_match?(regexps, log_content) do
     Enum.all?(regexps, fn reg -> Regex.match?(reg, log_content) end)
   end
+
+  def latest_heroic, do: [2, 20, 1]
 
   # TODO: find a way to not have to update these manually
   def latest_sonoma, do: [14, 8, 4]
