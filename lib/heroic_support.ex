@@ -10,6 +10,7 @@ defmodule HeroicSupport do
     correct_links =
       Regex.scan(~r{https://0x0.st/\S+.log}, content) |> Enum.at(0, []) |> fix_links()
 
+    IO.inspect("links found #{correct_links ++ fixed_wrong_links}")
     correct_links ++ fixed_wrong_links
   end
 
@@ -38,7 +39,13 @@ defmodule HeroicSupport do
   end
 
   def process_checks(checks) do
-    Enum.map(checks, fn check -> check_to_string(check) end) |> Enum.join("\n")
+    Enum.map(checks, fn check -> "- #{check_to_string(check)}" end) |> Enum.join("\n")
+  end
+
+  def content_results_to_message(results) do
+    results
+    |> Enum.map(fn check -> check_to_string(check) end)
+    |> Enum.join("\n\n")
   end
 
   def check_to_string("missingRosetta"),
@@ -73,6 +80,10 @@ defmodule HeroicSupport do
 
   def check_to_string(["outdatedHeroicVersion", latest_version]),
     do: "Your Heroic version is outdated, please update to #{Enum.join(latest_version, ".")}"
+
+  def check_to_string("fortniteOnlyWindows"),
+    do:
+      "Fortnite does NOT work on linux and MacOS, it ONLY works on Windows. There's no workaround. The only options are to use a streaming service like GeForce Now or use Windows."
 
   def check_to_string(unknown) do
     unknown
