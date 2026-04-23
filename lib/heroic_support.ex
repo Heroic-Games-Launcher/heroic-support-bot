@@ -4,11 +4,13 @@ defmodule HeroicSupport do
   """
 
   def find_links(content) do
-    fixed_wrong_links =
-      Regex.scan(~r{https://oxo.st/\S+.log}, content) |> Enum.at(0, []) |> fix_links()
+    # fixed_wrong_links =
+    #   Regex.scan(~r{https://dpaste.com/}, content) |> Enum.at(0, []) |> fix_links()
+    fixed_wrong_links = []
 
     correct_links =
-      Regex.scan(~r{https://0x0.st/\S+.log}, content) |> Enum.at(0, []) |> fix_links()
+      Regex.scan(~r{https://dpaste.com/[0-9A-Z]+}, content)
+      |> fix_links()
 
     IO.inspect("links found #{correct_links ++ fixed_wrong_links}")
     correct_links ++ fixed_wrong_links
@@ -21,7 +23,7 @@ defmodule HeroicSupport do
   end
 
   def fix_links(links) do
-    Enum.map(links, fn link -> String.replace(link, "oxo", "0x0") end)
+    Enum.map(links, fn [link] -> link <> ".txt" end)
     |> Enum.map(fn link -> [link, link] end)
   end
 

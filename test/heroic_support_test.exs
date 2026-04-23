@@ -2,34 +2,34 @@ defmodule HeroicSupportTest do
   use ExUnit.Case
   doctest HeroicSupport
 
-  test "extracts 0x0.st log link from message" do
+  test "extracts dpaste.com log link from message and adds .txt" do
     content = """
-    Hi! this is my log https://0x0.st/1234.log
+    Hi! this is my log https://dpaste.com/12345
     """
 
     assert HeroicSupport.find_links(content) == [
-             ["https://0x0.st/1234.log", "https://0x0.st/1234.log"]
+             ["https://dpaste.com/12345.txt", "https://dpaste.com/12345.txt"]
            ]
   end
 
-  test "extracts oxo.st log link from message" do
-    content = """
-    Hi! this is my log https://oxo.st/4321.log
-    """
+  # test "extracts oxo.st log link from message" do
+  #   content = """
+  #   Hi! this is my log https://oxo.st/4321.log
+  #   """
 
-    assert HeroicSupport.find_links(content) == [
-             ["https://0x0.st/4321.log", "https://0x0.st/4321.log"]
-           ]
-  end
+  #   assert HeroicSupport.find_links(content) == [
+  #            ["https://0x0.st/4321.log", "https://0x0.st/4321.log"]
+  #          ]
+  # end
 
   test "extracts multiple logs" do
     content = """
-    Hi! these are my logs https://0x0.st/1234.log and https://oxo.st/4321.log
+    Hi! these are my logs https://dpaste.com/1234 and https://dpaste.com/4321.txt re
     """
 
     assert HeroicSupport.find_links(content) == [
-             ["https://0x0.st/1234.log", "https://0x0.st/1234.log"],
-             ["https://0x0.st/4321.log", "https://0x0.st/4321.log"]
+             ["https://dpaste.com/1234.txt", "https://dpaste.com/1234.txt"],
+             ["https://dpaste.com/4321.txt", "https://dpaste.com/4321.txt"]
            ]
   end
 
