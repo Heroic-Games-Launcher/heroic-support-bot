@@ -89,7 +89,7 @@ defmodule HeroicSupport do
 
   def check_to_string("rocketLeagueNoMac"),
     do:
-      "Rocket League does NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. The only options are to use a streaming service like GeForce Now or change to Windows/Linux."
+      "Rocket League does NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. The only options are to change to Windows/Linux (only on Intel mac) or use a streaming service like GeForce Now (Intel and Apple Silicon Mac)."
 
   def check_to_string(unknown) do
     unknown
