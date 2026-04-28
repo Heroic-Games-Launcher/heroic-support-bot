@@ -87,6 +87,10 @@ defmodule HeroicSupport do
     do:
       "Fortnite does NOT work on linux and MacOS, it ONLY works on Windows. There's no workaround. The only options are to use a streaming service like GeForce Now or use Windows."
 
+  def check_to_string("rocketLeagueNoMac"),
+    do:
+      "Rocket League does NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. The only options are to use a streaming service like GeForce Now or change to Windows/Linux."
+
   def check_to_string(unknown) do
     unknown
   end
