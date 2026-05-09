@@ -85,11 +85,15 @@ defmodule HeroicSupport do
 
   def check_to_string("fortniteOnlyWindows"),
     do:
-      "Fortnite does NOT work on linux and MacOS, it ONLY works on Windows. There's no workaround. The only options are to use a streaming service like GeForce Now or use Windows."
+      "Fortnite does NOT work on linux and MacOS, it ONLY works on Windows. There's no workaround. Use the /fortnite command for more details."
 
   def check_to_string("rocketLeagueNoMac"),
     do:
-      "Rocket League does NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. The only options are to change to Windows/Linux (only on Intel mac) or use a streaming service like GeForce Now (Intel and Apple Silicon Mac)."
+      "Rocket League ONLINE features DO NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. Use the /rocketleague command for more details."
+
+  def check_to_string("gameFolderNotAccessible"),
+    do:
+      "You installed the game into a directory Heroic does not have access to. Move the game folder to ~/Games/Heroic/, then click \"Change Install Folder\" in the 3-dot menu on the top-right of the game details page. Select the game folder that you just moved."
 
   def check_to_string(unknown) do
     unknown

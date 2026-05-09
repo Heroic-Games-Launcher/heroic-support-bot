@@ -51,6 +51,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     |> check_flatpak_update_nvidia()
     |> check_dxvk_driver_version()
     |> check_wine_ge()
+    |> check_game_folder_path()
   end
 
   def analyze_for(unknown_os, _file_content) do
@@ -108,6 +109,14 @@ defmodule HeroicSupport.GameLogAnalyzer do
        ) and
          !Regex.match?(~r/Found device: NVIDIA/, file_content) do
       [["flatpakNvidiaOutdated" | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  def check_game_folder_path([issues, file_content]) do
+    if Regex.match?(~r/Installed in:\s+\/run\/user\/1000\/doc/, file_content) do
+      [["gameFolderNotAccessible" | issues], file_content]
     else
       [issues, file_content]
     end

@@ -428,4 +428,75 @@ defmodule FlatpakChecksTest do
 
     refute Enum.member?(issues, "flatpakNvidiaOutdated")
   end
+
+  test "flag game install folder outside of Heroic's access" do
+    content = """
+    (16:36:30) [INFO]:    Launching "Marvel's Midnight Suns" (legendary)
+    (16:36:30) [INFO]:    Native? false
+    (16:36:30) [INFO]:    Installed in: /run/user/1000/doc/abcde/midnightsuns
+
+    (16:36:30) [INFO]:    System Info:
+    CPU: 8x AMD Custom APU 0932
+    Memory: 15.53 GB (used: 3.72 GB)
+    GPUs:
+      GPU 0:
+        Name: Advanced Micro Devices, Inc. [AMD/ATI] Sephiroth [AMD Custom GPU 0405]
+        IDs: D=1435 V=1002 SD=0123 SV=1002
+        Driver: amdgpu
+    OS: SteamOS 3.7.23 holo (linux)
+
+    The current system is a Steam Deck (model: OLED) in desktop mode
+    We are running inside a Flatpak container
+    We are not running from an AppImage
+
+    Software Versions:
+      Heroic: 2.21.0 Loki
+      Legendary: 0.20.43 Riding Shotgun (Heroic)
+      gogdl: 1.2.1
+      comet: comet 0.2.0
+      Nile: 1.1.2 Will A. Zeppeli
+
+    (16:36:30) [INFO]:    Game Settings: {
+      "preferSystemLibs": false,
+      "enableEsync": true,
+      "enableFsync": true,
+      "enableWineWayland": false,
+      "enableHDR": false,
+      "enableWoW64": false,
+      "nvidiaPrime": false,
+      "offlineMode": false,
+      "enviromentOptions": [],
+      "wrapperOptions": [],
+      "savesPath": "",
+      "showFps": false,
+      "useGameMode": false,
+      "battlEyeRuntime": true,
+      "eacRuntime": false,
+      "language": "",
+      "beforeLaunchScriptPath": "",
+      "afterLaunchScriptPath": "",
+      "wineVersion": {
+        "bin": "/home/deck/.local/share/Steam/compatibilitytools.d/proton-cachyos-11.0-20260429-slr-x86_64/proton",
+        "name": "proton-cachyos-11.0-20260429-slr-x86_64",
+        "type": "proton"
+      },
+      "winePrefix": "/home/deck/Games/Heroic/Prefixes/default/Marvels Midnight Suns",
+      "disableUMU": true,
+      "ignoreGameUpdates": false
+    }
+    Stored at: /home/deck/.var/app/com.heroicgameslauncher.hgl/config/heroic/GamesConfig/49550aa9fcd74552ae07c4e9f2c262fe.json
+
+    (16:36:45) [INFO]:    Winetricks packages:
+
+    (16:36:45) [INFO]:    EOS Overlay: Not enabled
+    (16:36:51) [INFO]:    Launching Marvel's Midnight Suns: HEROIC_APP_NAME=49550aa9fcd74552ae07c4e9f2c262fe HEROIC_APP_RUNNER=legendary GAMEID=umu-0 HEROIC_APP_SOURCE=epic STORE=egs STEAM_COMPAT_INSTALL_PATH=/run/user/1000/doc/51f9a85d/midnightsuns USE_FAKE_EPIC_EXE=true LD_PRELOAD= STEAM_COMPAT_CLIENT_INSTALL_PATH=/home/deck/.var/app/com.heroicgameslauncher.hgl/.steam/steam WINEPREFIX="/home/deck/Games/Heroic/Prefixes/default/Marvels Midnight Suns" STEAM_COMPAT_DATA_PATH="/home/deck/Games/Heroic/Prefixes/default/Marvels Midnight Suns" PROTONPATH=/home/deck/.local/share/Steam/compatibilitytools.d/proton-cachyos-11.0-20260429-slr-x86_64 WINE_FULLSCREEN_FSR=0 PROTON_ENABLE_NVAPI=1 DXVK_NVAPI_ALLOW_OTHER_DRIVERS=1 PROTON_BATTLEYE_RUNTIME=/home/deck/.var/app/com.heroicgameslauncher.hgl/config/heroic/tools/runtimes/battleye_runtime STEAM_COMPAT_APP_ID=0 SteamAppId=0 SteamGameId=heroic-midnightsuns PROTON_LOG_DIR=/home/deck/.var/app/com.heroicgameslauncher.hgl WINEDEBUG=+fixme DXVK_LOG_LEVEL=info VKD3D_DEBUG=fixme LEGENDARY_CONFIG_PATH=/home/deck/.var/app/com.heroicgameslauncher.hgl/config/heroic/legendaryConfig/legendary /app/bin/heroic/resources/app.asar.unpacked/build/bin/x64/linux/legendary launch 49550aa9fcd74552ae07c4e9f2c262fe --no-wine --wrapper " "/home/deck/.local/share/Steam/compatibilitytools.d/proton-cachyos-11.0-20260429-slr-x86_64/proton" waitforexitandrun" --language en
+
+    (16:36:51) [INFO]:    Game Output:
+    ....
+    """
+
+    [issues, _] = HeroicSupport.GameLogAnalyzer.analyze_for("linux", content)
+
+    assert Enum.member?(issues, "gameFolderNotAccessible")
+  end
 end
