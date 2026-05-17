@@ -63,6 +63,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
   def general_checks([issues, file_content]) do
     [issues, file_content]
     |> check_heroic_version()
+    |> check_missing_metadata()
   end
 
   def check_nvidia_prime([issues, file_content]) do
@@ -76,6 +77,14 @@ defmodule HeroicSupport.GameLogAnalyzer do
   def check_missing_rosetta([issues, file_content]) do
     if Regex.match?(~r/Error: spawn Unknown system error -86/, file_content) do
       [["missingRosetta" | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  def check_missing_metadata([issues, file_content]) do
+    if Regex.match?(~r/CRITICAL: Metadata for .* does not exist, cannot launch!/, file_content) do
+      [["missingMetadata" | issues], file_content]
     else
       [issues, file_content]
     end

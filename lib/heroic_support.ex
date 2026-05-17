@@ -95,6 +95,10 @@ defmodule HeroicSupport do
     do:
       "You installed the game into a directory Heroic does not have access to. Move the game folder to ~/Games/Heroic/, then click \"Change Install Folder\" in the 3-dot menu on the top-right of the game details page. Select the game folder that you just moved."
 
+  def check_to_string("missingMetadata"),
+    do:
+      "When the \"CRITICAL: missing metadata\" error happens, this gets solved eventually automatically. Try again later and the problem should be gone."
+
   def check_to_string(unknown) do
     unknown
   end
