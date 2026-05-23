@@ -43,6 +43,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     |> check_missing_rosetta()
     |> check_gptk_on_intel()
     |> check_macos_version()
+    |> check_ubisoft()
   end
 
   def analyze_for("linux", file_content) do
@@ -105,6 +106,21 @@ defmodule HeroicSupport.GameLogAnalyzer do
     |> String.split(".")
     |> Enum.map(&String.to_integer/1)
     |> compare_macos_version(issues, file_content)
+  end
+
+  def check_ubisoft([issues, file_content]) do
+    if Regex.match?(~r/Managed by a third-party app: UbisoftConnect/, file_content) do
+      if Regex.match?(
+           ~r/game-porting-toolki|wine-crossover|wine-staging|wine-devel/,
+           file_content
+         ) do
+        [["ubisoftRequiresCrossover" | issues], file_content]
+      else
+        [issues, file_content]
+      end
+    else
+      [issues, file_content]
+    end
   end
 
   def check_flatpak_update_nvidia([issues, file_content]) do

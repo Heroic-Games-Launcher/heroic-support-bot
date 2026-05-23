@@ -227,4 +227,59 @@ defmodule MacChecksTest do
       refute Enum.member?(issues, ["outdatedMacOsVersion" | latest])
     end)
   end
+
+  test "detects ubisoft game not using Crossover" do
+    content = """
+      (12:59:26) [INFO]:    Launching "Brawlhalla" (legendary)
+      (12:59:26) [INFO]:    Native? false
+      (12:59:26) [INFO]:    Installed in: /Users/user/Games/Heroic/Prefixes/Brawlhalla
+      (12:59:26) [INFO]:    Managed by a third-party app: UbisoftConnect
+
+      (12:59:26) [INFO]:    System Info:
+      CPU: 10x Apple M4
+      Memory: 17.18 GB (used: 6.78 GB)
+      GPUs:
+
+      OS: macOS 15.6.1 (darwin)
+
+      The current system is not a Steam Deck
+
+      Software Versions:
+        Heroic: 2.22.0 Hajrudin
+        Legendary: 0.20.43 Riding Shotgun (Heroic)
+        gogdl: 1.2.1
+        comet: comet 0.2.0
+        Nile: 1.1.2 Will A. Zeppeli
+
+      (12:59:26) [INFO]:    Game Settings: {
+        "enableEsync": true,
+        "enableMsync": true,
+        "offlineMode": false,
+        "enviromentOptions": [],
+        "wrapperOptions": [],
+        "showFps": false,
+        "targetExe": "",
+        "language": "",
+        "beforeLaunchScriptPath": "",
+        "afterLaunchScriptPath": "",
+        "advertiseAvxForRosetta": false,
+        "wineVersion": {
+          "wineserver": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wineserver",
+          "lib": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/lib",
+          "lib32": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/lib",
+          "bin": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wine64",
+          "name": "Game-Porting-Toolkit-latest",
+          "type": "toolkit"
+        },
+        "winePrefix": "/Users/user/Games/Heroic/Prefixes/Brawlhalla"
+      }
+      Stored at: /Users/user/Library/Application Support/heroic/GamesConfig/c051e0b1433d4308baa920c08ba1a8eb.json
+
+      (12:59:26) [INFO]:    ...
+    """
+
+    [issues, _] = HeroicSupport.GameLogAnalyzer.analyze_for("darwin", content)
+
+    assert Enum.member?(issues, "ubisoftRequiresCrossover")
+  end
 end

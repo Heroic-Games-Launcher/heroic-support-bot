@@ -99,6 +99,10 @@ defmodule HeroicSupport do
     do:
       "When the \"CRITICAL: missing metadata\" error happens, this gets solved eventually automatically. Try again later and the problem should be gone."
 
+  def check_to_string("ubisoftRequiresCrossover"),
+    do:
+      "Ubisoft games can only be played with the paid Crossover on MacOS. Other compatibility layers (GamePortingToolkit, Wine-Crossover, Wine-Stating) cannot run the Ubisoft Connect launcher."
+
   def check_to_string(unknown) do
     unknown
   end
