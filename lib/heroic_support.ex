@@ -91,6 +91,10 @@ defmodule HeroicSupport do
     do:
       "Rocket League ONLINE features DO NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. Use the /rocketleague command for more details."
 
+  def check_to_string("steamNoMac"),
+    do:
+      "A mention of Steam was detected in the thread. Heroic cannot run Steam on MacOS. Read https://discord.com/channels/812703221789097985/1044301598018515105/1413737346381254839 for alternatives."
+
   def check_to_string("gameFolderNotAccessible"),
     do:
       "You installed the game into a directory Heroic does not have access to. Move the game folder to ~/Games/Heroic/, then click \"Change Install Folder\" in the 3-dot menu on the top-right of the game details page. Select the game folder that you just moved."
@@ -106,6 +110,10 @@ defmodule HeroicSupport do
   def check_to_string("eaRequiresCrossover"),
     do:
       "EA games can only be played with the paid Crossover on MacOS. Other compatibility layers (GamePortingToolkit, Wine-Crossover, Wine-Stating) cannot run the EA App."
+
+  def check_to_string("piratedGameDetected"),
+    do:
+      "A known source of pirated games is mentioned in the logs. We cannot help with pirated games. Read the server rules. This check may incorrectly flag some games, if the game is NOT pirated, ignore this message."
 
   def check_to_string(unknown) do
     unknown

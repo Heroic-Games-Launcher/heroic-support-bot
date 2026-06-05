@@ -66,6 +66,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     [issues, file_content]
     |> check_heroic_version()
     |> check_missing_metadata()
+    |> check_pirated_game()
   end
 
   def check_nvidia_prime([issues, file_content]) do
@@ -188,6 +189,14 @@ defmodule HeroicSupport.GameLogAnalyzer do
 
     if versionList < latest_heroic() do
       [[["outdatedHeroicVersion", latest_heroic()] | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  def check_pirated_game([issues, file_content]) do
+    if Regex.match?(~r/steamrip|fit.?girl|repack|steamunlocked|mactnt/i, file_content) do
+      [["piratedGameDetected" | issues], file_content]
     else
       [issues, file_content]
     end
