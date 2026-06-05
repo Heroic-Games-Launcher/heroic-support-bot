@@ -103,6 +103,10 @@ defmodule HeroicSupport do
     do:
       "Ubisoft games can only be played with the paid Crossover on MacOS. Other compatibility layers (GamePortingToolkit, Wine-Crossover, Wine-Stating) cannot run the Ubisoft Connect launcher."
 
+  def check_to_string("eaRequiresCrossover"),
+    do:
+      "EA games can only be played with the paid Crossover on MacOS. Other compatibility layers (GamePortingToolkit, Wine-Crossover, Wine-Stating) cannot run the EA App."
+
   def check_to_string(unknown) do
     unknown
   end

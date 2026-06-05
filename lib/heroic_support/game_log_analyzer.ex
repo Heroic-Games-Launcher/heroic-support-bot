@@ -44,6 +44,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     |> check_gptk_on_intel()
     |> check_macos_version()
     |> check_ubisoft()
+    |> check_ea()
   end
 
   def analyze_for("linux", file_content) do
@@ -115,6 +116,21 @@ defmodule HeroicSupport.GameLogAnalyzer do
            file_content
          ) do
         [["ubisoftRequiresCrossover" | issues], file_content]
+      else
+        [issues, file_content]
+      end
+    else
+      [issues, file_content]
+    end
+  end
+
+  def check_ea([issues, file_content]) do
+    if Regex.match?(~r/Managed by a third-party app: Origin/, file_content) do
+      if Regex.match?(
+           ~r/game-porting-toolki|wine-crossover|wine-staging|wine-devel/,
+           file_content
+         ) do
+        [["eaRequiresCrossover" | issues], file_content]
       else
         [issues, file_content]
       end

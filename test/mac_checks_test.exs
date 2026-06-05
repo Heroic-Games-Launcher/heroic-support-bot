@@ -282,4 +282,82 @@ defmodule MacChecksTest do
 
     assert Enum.member?(issues, "ubisoftRequiresCrossover")
   end
+
+  test "detects ea game not using Crossover" do
+    content = """
+      (18:17:55) [INFO]:    Launching "STAR WARS™ Battlefront™ II: Celebration Edition" (legendary)
+      (18:17:55) [INFO]:    Native? false
+      (18:17:55) [INFO]:    Installed in: /Users/user/Games/Heroic/Prefixes/STAR WARS Battlefront II Celebration Edition
+      (18:17:55) [INFO]:    Managed by a third-party app: Origin
+
+      (18:17:55) [INFO]:    System Info:
+      CPU: 8x Apple M2
+      Memory: 8.59 GB (used: 3.06 GB)
+      GPUs:
+
+      OS: macOS 26.5.1 (darwin)
+
+      The current system is not a Steam Deck
+
+      Software Versions:
+        Heroic: 2.22.0 Hajrudin
+        Legendary: 0.20.43 Riding Shotgun (Heroic)
+        gogdl: 1.2.1
+        comet: comet 0.2.0
+        Nile: 1.1.2 Will A. Zeppeli
+
+      (18:17:55) [INFO]:    Game Settings: {
+        "enableEsync": true,
+        "enableMsync": true,
+        "enviromentOptions": [],
+        "wrapperOptions": [],
+        "showFps": false,
+        "language": "",
+        "beforeLaunchScriptPath": "",
+        "afterLaunchScriptPath": "",
+        "advertiseAvxForRosetta": false,
+        "wineVersion": {
+          "wineserver": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wineserver",
+          "lib": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/lib",
+          "lib32": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/lib",
+          "bin": "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wine64",
+          "name": "Game-Porting-Toolkit-latest",
+          "type": "toolkit"
+        },
+        "winePrefix": "/Users/user/Games/Heroic/Prefixes/STAR WARS Battlefront II Celebration Edition"
+      }
+      Stored at: /Users/user/Library/Application Support/heroic/GamesConfig/MtMassive.json
+
+      (18:17:55) [INFO]:    Anticheat Status: Unknown
+      (18:17:55) [INFO]:    Anticheats: FairFight
+
+      (18:17:55) [INFO]:    Winetricks packages:
+
+      (18:18:01) [INFO]:    Launching STAR WARS™ Battlefront™ II: Celebration Edition: HEROIC_APP_NAME=MtMassive HEROIC_APP_RUNNER=legendary GAMEID=umu-0 HEROIC_APP_SOURCE=epic STORE=egs LD_PRELOAD= WINEPREFIX="/Users/user/Games/Heroic/Prefixes/STAR WARS Battlefront II Celebration Edition" WINE_FULLSCREEN_FSR=0 WINEESYNC=1 WINEMSYNC=1 LEGENDARY_CONFIG_PATH="/Users/user/Library/Application Support/heroic/legendaryConfig/legendary" /Applications/Heroic.app/Contents/Resources/app.asar.unpacked/build/bin/arm64/darwin/legendary launch MtMassive --wine "/Users/user/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wine64" --language en --origin
+
+      (18:18:01) [INFO]:    Game Output:
+      [cli] INFO: Logging in...
+      [Core] INFO: Trying to re-use existing login session...
+      esync: up and running.
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      00b4:fixme:exec:SHELL_execute flags ignored: 0x00000100
+      Application could not be started, or no application associated with the specified file.
+      ShellExecuteEx failed
+      :
+      Invalid name.
+      ============= End of log =============
+    """
+
+    [issues, _] = HeroicSupport.GameLogAnalyzer.analyze_for("darwin", content)
+
+    assert Enum.member?(issues, "eaRequiresCrossover")
+  end
 end
