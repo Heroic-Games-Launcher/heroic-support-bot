@@ -85,11 +85,11 @@ defmodule HeroicSupport do
 
   def check_to_string("fortniteOnlyWindows"),
     do:
-      "Fortnite does NOT work on linux and MacOS, it ONLY works on Windows. There's no workaround. Use the /fortnite command for more details."
+      "Fortnite does NOT work on linux and MacOS, it ONLY works on Windows. There's no workaround. Use the /fortnite command here in Discord for more details."
 
   def check_to_string("rocketLeagueNoMac"),
     do:
-      "Rocket League ONLINE features DO NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. Use the /rocketleague command for more details."
+      "Rocket League ONLINE features DO NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. Use the /rocketleague command here in Discord for more details."
 
   def check_to_string("steamNoMac"),
     do:
