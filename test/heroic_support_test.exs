@@ -10,6 +10,12 @@ defmodule HeroicSupportTest do
     assert HeroicSupport.find_links(content) == [
              ["https://dpaste.com/12345.txt", "https://dpaste.com/12345.txt"]
            ]
+
+    content = "https://dpaste.com/2yyh6ysmg"
+
+    assert HeroicSupport.find_links(content) == [
+             ["https://dpaste.com/2yyh6ysmg.txt", "https://dpaste.com/2yyh6ysmg.txt"]
+           ]
   end
 
   # test "extracts oxo.st log link from message" do

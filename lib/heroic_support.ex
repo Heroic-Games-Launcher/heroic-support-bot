@@ -9,7 +9,7 @@ defmodule HeroicSupport do
     fixed_wrong_links = []
 
     correct_links =
-      Regex.scan(~r{https://dpaste.com/[0-9A-Z]+}, content)
+      Regex.scan(~r{https://dpaste.com/[0-9A-Za-z]+}, content)
       |> fix_links()
 
     IO.inspect("links found #{correct_links ++ fixed_wrong_links}")
