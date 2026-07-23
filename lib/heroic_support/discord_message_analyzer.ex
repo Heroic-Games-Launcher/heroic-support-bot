@@ -8,6 +8,7 @@ defmodule HeroicSupport.DiscordMessageAnalyzer do
       |> check_fortnite_linux_mac()
       |> check_rocket_league_mac()
       |> check_steam_mac()
+      |> check_rockstar_mac()
 
     issues
   end
@@ -41,6 +42,28 @@ defmodule HeroicSupport.DiscordMessageAnalyzer do
 
     if first_message && mac_tag && rocket_league_thread do
       [["rocketLeagueNoMac" | results], message, channel]
+    else
+      [results, message, channel]
+    end
+  end
+
+  def check_rockstar_mac([results, message, channel]) do
+    first_message = message.id == channel.id
+
+    mac_tag = Enum.member?(channel.applied_tags, mac_tag())
+
+    rockstar_game_thread =
+      Regex.match?(
+        ~r/rockstar|gta|rdr2|grand theft auto|red dead redemption/,
+        String.downcase(message.content)
+      ) ||
+        Regex.match?(
+          ~r/rockstar|gta|rdr2|grand theft auto|red dead redemption/,
+          String.downcase(channel.name)
+        )
+
+    if first_message && mac_tag && rockstar_game_thread do
+      [["rockstarGameMacWiki" | results], message, channel]
     else
       [results, message, channel]
     end

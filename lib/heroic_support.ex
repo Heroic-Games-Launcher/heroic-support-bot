@@ -91,6 +91,10 @@ defmodule HeroicSupport do
     do:
       "Rocket League ONLINE features DO NOT work on MacOS since they added EAC (Easy Anti Cheat). There's no workaround. Use the /rocketleague command here in Discord for more details."
 
+  def check_to_string("rockstarGameMacWiki"),
+    do:
+      "You seem to be trying to run a Rockstar game on MacOS (GTA or Red Dead Redemption). Check this Wiki page for more requirements and known solutions https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/wiki/Rockstar-Games-from-Epic-Games#rockstar-games-on-macos"
+
   def check_to_string("steamNoMac"),
     do:
       "A mention of Steam was detected in the thread. Heroic cannot run Steam on MacOS. Read https://discord.com/channels/812703221789097985/1044301598018515105/1413737346381254839 for alternatives."
