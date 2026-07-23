@@ -117,14 +117,14 @@ defmodule HeroicSupport.Consumer do
         if result_string != "" do
           Message.create(
             msg.channel_id,
-            "[This is an automatic message, don't reply to the bot 🤖]\n\n#{result_string}"
+            "#{result_string}\n\n[This is an automatic message, don't reply to the bot 🤖]"
           )
         end
       else
         if msg.id == msg.channel_id do
           Message.create(
             msg.channel_id,
-            "[This is an automatic message, don't reply to the bot 🤖]\n\nNo log links or attachments detected. Make sure to read https://discord.com/channels/812703221789097985/1044301598018515105 and use the /gamelog command here in Discord for instructions."
+            "No log links or attachments detected. Make sure to read https://discord.com/channels/812703221789097985/1044301598018515105 and use the /gamelog command here in Discord for instructions.\n\n[This is an automatic message, don't reply to the bot 🤖]"
           )
         end
       end
@@ -139,7 +139,7 @@ defmodule HeroicSupport.Consumer do
         if result_string != "" do
           Message.create(
             msg.channel_id,
-            "[This is an automatic message, don't reply to the bot 🤖]\n\n#{result_string}"
+            "#{result_string}\n\n[This is an automatic message, don't reply to the bot 🤖]"
           )
         end
       end
