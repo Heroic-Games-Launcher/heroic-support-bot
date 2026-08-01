@@ -195,7 +195,9 @@ defmodule HeroicSupport.GameLogAnalyzer do
   end
 
   def check_pirated_game([issues, file_content]) do
-    if Regex.match?(~r/steamrip|fit.?girl|repack|steamunlocked|mactnt/i, file_content) do
+    if Regex.match?(~r/ \(sideloaded\)/, file_content) &&
+         Regex.match?(~r/steamrip|fit.?girl|repack|steamunlocked|mactnt/i, file_content) &&
+         !Regex.match?(~r/wine.*~repack/, file_content) do
       [["piratedGameDetected" | issues], file_content]
     else
       [issues, file_content]

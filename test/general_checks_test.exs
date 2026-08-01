@@ -217,4 +217,148 @@ defmodule GeneralChecksTest do
       end
     )
   end
+
+  test "checks for pirated game only if sideloaded" do
+    platforms = ["legendary", "gog", "zoom", "amazon"]
+
+    Enum.each(
+      ["SteamRIP", "steamrip", "FitGirl", "fit girl", "repack", "steamunlocked", "mactnt"],
+      fn site ->
+        content = """
+          (23:39:43) [INFO]:    Launching "whatever" (#{Enum.random(platforms)})
+          (23:39:43) [INFO]:    Native? false
+          (23:39:43) [INFO]:    Installed in: /home/user/Games/Heroic/#{site}_game
+
+          (23:39:43) [INFO]:    System Info:
+          CPU: 12x 13th Gen Intel(R) Core(TM) i5-1335U
+          Memory: 8.05 GB (used: 1.8 GB)
+          GPUs:
+            GPU 0:
+              Name: Intel Corporation Raptor Lake-P [UHD Graphics]
+              IDs: D=a721 V=8086 SD=2782 SV=0100
+              Driver: i915
+          OS: Debian GNU/Linux 13 (trixie) (linux)
+
+          The current system is not a Steam Deck
+          We are running inside a Flatpak container
+          We are not running from an AppImage
+
+          Software Versions:
+            Heroic: 2.22.0 Hajrudin
+            Legendary: 0.20.43 Riding Shotgun (Heroic)
+            gogdl: 1.2.1
+            comet: comet 0.2.0
+            Nile: 1.1.2 Will A. Zeppeli
+
+          (23:39:43) [INFO]:    Game Settings: {
+            "autoInstallDxvkNvapi": true,
+            "preferSystemLibs": false,
+            "enableEsync": true,
+            "enableFsync": true,
+            "enableWineWayland": false,
+            "enableHDR": false,
+            "enableWoW64": false,
+            "nvidiaPrime": false,
+            "enviromentOptions": [],
+            "wrapperOptions": [],
+            "showFps": false,
+            "useGameMode": true,
+            "battlEyeRuntime": true,
+            "eacRuntime": true,
+            "language": "",
+            "beforeLaunchScriptPath": "",
+            "afterLaunchScriptPath": "",
+            "wineVersion": {
+              "bin": "/home/user/.var/app/com.heroicgameslauncher.hgl/config/heroic/tools/proton/GE-Proton-latest/proton",
+              "name": "GE-Proton-latest",
+              "type": "proton"
+            },
+            "winePrefix": "/home/user/Games/Heroic/Prefixes/game",
+            "lastUsedLaunchOption": {
+              "name": "Default",
+              "parameters": "",
+              "type": "basic"
+            }
+          }
+          Stored at: /home/user/.var/app/com.heroicgameslauncher.hgl/config/heroic/GamesConfig/asdasdasd.json
+
+          (23:39:43) [INFO]:    Winetricks packages: vcrun2022
+          (23:39:46) [INFO]:    Launching ....
+        """
+
+        [issues, _] = HeroicSupport.GameLogAnalyzer.general_checks([[], content])
+
+        refute Enum.member?(issues, "piratedGameDetected")
+      end
+    )
+  end
+
+  test "don't flag as pirated if 'wine repack'" do
+    content = """
+      (23:39:43) [INFO]:    Launching "whatever" (sideloaded)
+      (23:39:43) [INFO]:    Native? false
+      (23:39:43) [INFO]:    Installed in: /home/user/Games/Heroic/normal game _game
+
+      (23:39:43) [INFO]:    System Info:
+      CPU: 12x 13th Gen Intel(R) Core(TM) i5-1335U
+      Memory: 8.05 GB (used: 1.8 GB)
+      GPUs:
+        GPU 0:
+          Name: Intel Corporation Raptor Lake-P [UHD Graphics]
+          IDs: D=a721 V=8086 SD=2782 SV=0100
+          Driver: i915
+      OS: Debian GNU/Linux 13 (trixie) (linux)
+
+      The current system is not a Steam Deck
+      We are running inside a Flatpak container
+      We are not running from an AppImage
+
+      Software Versions:
+        Heroic: 2.22.0 Hajrudin
+        Legendary: 0.20.43 Riding Shotgun (Heroic)
+        gogdl: 1.2.1
+        comet: comet 0.2.0
+        Nile: 1.1.2 Will A. Zeppeli
+
+      (23:39:43) [INFO]:    Game Settings: {
+        "autoInstallDxvkNvapi": true,
+        "preferSystemLibs": false,
+        "enableEsync": true,
+        "enableFsync": true,
+        "enableWineWayland": false,
+        "enableHDR": false,
+        "enableWoW64": false,
+        "nvidiaPrime": false,
+        "enviromentOptions": [],
+        "wrapperOptions": [],
+        "showFps": false,
+        "useGameMode": true,
+        "battlEyeRuntime": true,
+        "eacRuntime": true,
+        "language": "",
+        "beforeLaunchScriptPath": "",
+        "afterLaunchScriptPath": "",
+        "wineVersion": {
+          "bin": "/usr/bin/wine",
+          "name": "wine-9.0 (Ubuntu 9.0~repack-4build3)",
+          "type": "wine",
+          "wineserver": "/usr/bin/wineserver"
+        },
+        "winePrefix": "/home/user/Games/Heroic/Prefixes/game",
+        "lastUsedLaunchOption": {
+          "name": "Default",
+          "parameters": "",
+          "type": "basic"
+        }
+      }
+      Stored at: /home/user/.var/app/com.heroicgameslauncher.hgl/config/heroic/GamesConfig/asdasdasd.json
+
+      (23:39:43) [INFO]:    Winetricks packages: vcrun2022
+      (23:39:46) [INFO]:    Launching ....
+    """
+
+    [issues, _] = HeroicSupport.GameLogAnalyzer.general_checks([[], content])
+
+    refute Enum.member?(issues, "piratedGameDetected")
+  end
 end
