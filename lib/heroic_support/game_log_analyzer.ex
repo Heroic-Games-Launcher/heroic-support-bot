@@ -212,12 +212,12 @@ defmodule HeroicSupport.GameLogAnalyzer do
     Enum.all?(regexps, fn reg -> Regex.match?(reg, log_content) end)
   end
 
-  def latest_heroic, do: [2, 22, 0]
+  def latest_heroic, do: [2, 22, 1]
 
   # TODO: find a way to not have to update these manually
-  def latest_sonoma, do: [14, 8, 7]
-  def latest_sequoia, do: [15, 7, 7]
-  def latest_tahoe, do: [26, 5, 0]
+  def latest_sonoma, do: [14, 8, 9]
+  def latest_sequoia, do: [15, 7, 9]
+  def latest_tahoe, do: [26, 6, 1]
 
   defp compare_macos_version([26 | _rest] = ver, issues, file_content) do
     if ver < latest_tahoe() do
