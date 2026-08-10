@@ -67,7 +67,7 @@ defmodule HeroicSupport do
 
   def check_to_string("nvidiaPrimeIsOn"),
     do:
-      "The `Use Dedicated Graphics Card` option is almost never needed. Disable it unless you are completely sure you need it."
+      "The `Force use of NVIDIA Optimus or AMD Dynamic Switchable Graphics dGPU` option is almost never needed. Disable it unless you are completely sure you need it."
 
   def check_to_string("wineGEDeprecated"),
     do:
