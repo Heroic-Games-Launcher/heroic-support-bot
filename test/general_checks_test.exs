@@ -361,4 +361,83 @@ defmodule GeneralChecksTest do
 
     refute Enum.member?(issues, "piratedGameDetected")
   end
+
+  test "detects wiki links" do
+    content = """
+      (11:42:21) [INFO]:    Launching "Grand Theft Auto V Enhanced" (legendary)
+      (11:42:21) [INFO]:    Native? false
+      (11:42:21) [INFO]:    Installed in: /mnt/e9e3cbff-b1e5-4ef8-aaeb-e349a7d0bbac/home/ariel/Games/Heroic/GTAVEnhanced
+
+      (11:42:21) [INFO]:    System Info:
+      CPU: 16x AMD Ryzen 7 3700X 8-Core Processor
+      Memory: 33.53 GB (used: 11.03 GB)
+      GPUs:
+        GPU 0:
+          Name: Advanced Micro Devices, Inc. [AMD/ATI] RX 5700 XT RAW II
+          IDs: D=731f V=1002 SD=5701 SV=1682
+          Driver: amdgpu
+      OS: Linux Mint 22.2 (Zara) (linux)
+
+      The current system is not a Steam Deck
+      We are not running inside a Flatpak container
+      We are not running from an AppImage
+
+      Software Versions:
+        Heroic: 2.22.1 Hajrudin
+        Legendary: 0.21.1 Lowlife
+        gogdl: 1.3.0
+        comet: comet 0.2.0
+        Nile: 1.2.0 Robert Speedwagon
+
+      (11:42:21) [INFO]:    Game Settings: {
+        "autoInstallDxvkNvapi": false,
+        "preferSystemLibs": false,
+        "enableEsync": true,
+        "enableFsync": true,
+        "enableWineWayland": false,
+        "enableHDR": false,
+        "enableWoW64": false,
+        "nvidiaPrime": false,
+        "enviromentOptions": [
+          {
+            "key": "USE_FAKE_EPIC_EXE",
+            "value": "true"
+          }
+        ],
+        "wrapperOptions": [],
+        "showFps": false,
+        "useGameMode": false,
+        "battlEyeRuntime": true,
+        "eacRuntime": true,
+        "language": "",
+        "beforeLaunchScriptPath": "",
+        "afterLaunchScriptPath": "",
+        "wineVersion": {
+          "bin": "/home/ariel/.config/heroic/tools/proton/GE-Proton11-6/proton",
+          "name": "GE-Proton11-6",
+          "type": "proton"
+        },
+        "winePrefix": "/home/ariel/Games/Heroic/Prefixes/Grand Theft Auto V Enhanced",
+        "disableUMU": false
+      }
+      Stored at: /home/ariel/.config/heroic/GamesConfig/8769e24080ea413b8ebca3f1b8c50951.json
+
+      (11:42:21) [INFO]:    Wiki Link, read this: https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/wiki/Rockstar-Games-from-Epic-Games
+
+      (11:42:32) [INFO]:    Winetricks packages: vcrun2022
+
+      (11:42:32) [INFO]:    EOS Overlay: Enabled
+      (11:42:40) [INFO]:    Launching Grand Theft Auto V Enhanced: HEROIC_APP_NAME=8769e24080ea413b8ebca3f1b8c50951 HEROIC_APP_RUNNER=legendary GAMEID=umu-0 HEROIC_APP_SOURCE=epic STORE=egs STEAM_COMPAT_INSTALL_PATH=/mnt/e9e3cbff-b1e5-4ef8-aaeb-e349a7d0bbac/home/ariel/Games/Heroic/GTAVEnhanced USE_FAKE_EPIC_EXE=true LD_PRELOAD= LEGENDARY_WRAPPER_EXE=C:\windows\command\EpicGamesLauncher.exe STEAM_COMPAT_CLIENT_INSTALL_PATH=/home/ariel/.steam/steam WINEPREFIX="/home/ariel/Games/Heroic/Prefixes/Grand Theft Auto V Enhanced" STEAM_COMPAT_DATA_PATH="/home/ariel/Games/Heroic/Prefixes/Grand Theft Auto V Enhanced" PROTONPATH=/home/ariel/.config/heroic/tools/proton/GE-Proton11-6 WINE_FULLSCREEN_FSR=0 PROTON_DISABLE_NVAPI=1 PROTON_EAC_RUNTIME=/home/ariel/.config/heroic/tools/runtimes/eac_runtime PROTON_BATTLEYE_RUNTIME=/home/ariel/.config/heroic/tools/runtimes/battleye_runtime STEAM_COMPAT_APP_ID=0 SteamAppId=0 SteamGameId=heroic-GTAVEnhanced PROTON_LOG_DIR=/home/ariel WINEDEBUG=+fixme DXVK_LOG_LEVEL=info VKD3D_DEBUG=fixme LEGENDARY_CONFIG_PATH=/home/ariel/.config/heroic/legendaryConfig/legendary /home/ariel/dev/oss/HeroicGamesLauncher/public/bin/x64/linux/legendary launch 8769e24080ea413b8ebca3f1b8c50951 --no-wine --wrapper "/home/ariel/.config/heroic/tools/runtimes/umu/umu_run.py" --language en
+
+      (11:42:40) [INFO]:    Game Output:
+      ============= End of log =============
+    """
+
+    [issues, _] = HeroicSupport.GameLogAnalyzer.general_checks([[], content])
+
+    assert Enum.member?(issues, [
+             "wikiLinkDetected",
+             "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher/wiki/Rockstar-Games-from-Epic-Games"
+           ])
+  end
 end

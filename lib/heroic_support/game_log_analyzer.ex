@@ -67,6 +67,7 @@ defmodule HeroicSupport.GameLogAnalyzer do
     |> check_heroic_version()
     |> check_missing_metadata()
     |> check_pirated_game()
+    |> check_wiki_link()
   end
 
   def check_nvidia_prime([issues, file_content]) do
@@ -199,6 +200,16 @@ defmodule HeroicSupport.GameLogAnalyzer do
          Regex.match?(~r/steamrip|fit.?girl|repack|steamunlocked|mactnt/i, file_content) &&
          !Regex.match?(~r/wine.*~repack/, file_content) do
       [["piratedGameDetected" | issues], file_content]
+    else
+      [issues, file_content]
+    end
+  end
+
+  def check_wiki_link([issues, file_content]) do
+    captures = Regex.named_captures(~r/Wiki Link, read this: (?<wikiLink>.*)/, file_content)
+
+    if captures do
+      [[["wikiLinkDetected", Map.get(captures, "wikiLink")] | issues], file_content]
     else
       [issues, file_content]
     end

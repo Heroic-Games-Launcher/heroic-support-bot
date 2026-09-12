@@ -119,6 +119,9 @@ defmodule HeroicSupport do
     do:
       "A known source of pirated games is mentioned in the logs. We cannot help with pirated games. Read the server rules. This check may incorrectly flag some games, if the game is NOT pirated, ignore this message."
 
+  def check_to_string(["wikiLinkDetected", link]),
+    do: "A Wiki link was detected. READ THIS: #{link}."
+
   def check_to_string(unknown) do
     unknown
   end
